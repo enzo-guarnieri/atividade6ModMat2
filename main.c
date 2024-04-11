@@ -12,16 +12,75 @@ void recurMultMatriz(int **A, int **B, int **C, int m, int n, int p, int i, int 
     }
 }
 
-void printMatrizProblema1(int **C, int m, int p) {
-    printf("Tijolo | Tinta | Vidro | Madeira | Ferro\n");
+int** allocateMatrix(int rows, int cols) {
+    int** matrix = (int**)malloc(rows * sizeof(int*));
+    for (int i = 0; i < rows; i++) {
+        matrix[i] = (int*)malloc(cols * sizeof(int));
+    }
+    return matrix;
+}
+void freeMatrix(int** matrix, int rows) {
+    for (int i = 0; i < rows; i++) {
+        free(matrix[i]);
+    }
+    free(matrix);
+}
+
+void printMatrix(int** matrix, int rows, int cols) {
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            printf("%d ", matrix[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+
+int** multiplyMatrixColumnByArray(int rows, int cols, int matrix[rows][cols], int* factors) {
+    int** result = allocateMatrix(rows, cols);
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            result[i][j] = matrix[i][j] * factors[j];
+        }
+    }
+    return result;
+}
+
+int** multiplyMatrixRowByArray(int rows, int cols, int** matrix, int* factors) {
+    int** result = allocateMatrix(rows, cols);
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            result[i][j] = matrix[i][j] * factors[i];
+        }
+    }
+    return result;
+}
+
+int* sumMatrixRows(int rows, int cols, int** matrix ) {
+    int* result = (int*)malloc(3 * sizeof(int));
+    int total = 0;
+    for (int i = 0; i < rows; i++) {
+        total = 0;
+        for (int j = 0; j < cols; j++) {
+            total = total + matrix[i][j] ;
+        }
+        result[i] = total;
+    }
+    return result;
+}
+
+
+void printMatrizProblema1(int **C, int m, int p, int*totalPrice) {
+    printf("Ferro | Madeira | Vidro | Tinta | Tijolo\n");
     printf("----------------------------------------\n");
     char *tipos[3] = {"Moderno", "Mediterraneo", "Colonial"};
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < p; j++) {
             printf("%7d ", C[i][j]);
         }
-        printf(" (%s)\n", tipos[i]);
+        printf(" (%s) CUSTO TOTAL: R$ %d\n", tipos[i],totalPrice[i]);
     }
+
 }
 
 void printMatrizProblema2(int **F, int m, int p) {
@@ -37,7 +96,7 @@ void printMatrizProblema2(int **F, int m, int p) {
 }
 
 int main(void) {
-
+    printf("\n1.\n");
 
     int m = 2, n = 3, p = 4;
     int **A = (int **)malloc(m * sizeof(int *));
@@ -56,9 +115,9 @@ int main(void) {
     B[2][0] = 1; B[2][1] = 2; B[2][2] = 7; B[2][3] = 6;
 
     recurMultMatriz(A, B, C, m, n, p, 0, 0, 0, 0);
-    printf("\n1.\n");
 
-    printMatrizProblema1(C, m, p);
+
+    printMatrix(C, m, p);
 
     for(int i = 0; i < m; i++) free(A[i]);
     free(A);
@@ -69,38 +128,32 @@ int main(void) {
 
     printf("\n2. Resolvendo o Problema 1:\n");
 
-    int m1 = 3, n1 = 5, p1 = 1;
-    int recursos[3][5] = {{17, 7, 16, 20, 5}, {21, 9, 12, 18, 7}, {23, 5, 8, 25, 6}};
-    int quantidades[5][1] = {{5}, {7}, {12}, {0}, {0}};
+    int matrix[3][5] = {
+            {5, 20, 16, 7, 17},  // Moderno
+            {7, 18, 12, 9, 21},  // Mediterrâneo
+            {6, 25, 8, 5, 23}    // Colonial
+    };
+    // Given prices array
+    int prices[5] = {15, 8, 5, 1, 10};
+    int quantities[3] = {5,7,12};
 
-    int **X = (int **)malloc(m1 * sizeof(int *));
-    int **Y = (int **)malloc(n1 * sizeof(int *));
-    int **Z = (int **)malloc(m1 * sizeof(int *));
+    // Rows and columns
+    int rows = 3, cols = 5;
 
-    for (int i = 0; i < m1; i++) X[i] = (int *)malloc(n1 * sizeof(int));
-    for (int i = 0; i < n1; i++) Y[i] = (int *)malloc(p1 * sizeof(int));
-    for (int i = 0; i < m1; i++) Z[i] = (int *)malloc(p1 * sizeof(int));
+    // Multiply the matrix by the column factors
+    int** resultMatrix = multiplyMatrixColumnByArray(rows, cols, matrix, prices);
+    int** finalResultMatrix = multiplyMatrixRowByArray(rows, cols, resultMatrix, quantities);
+    int* totalCost = sumMatrixRows(rows,cols,finalResultMatrix);
 
 
-    for (int i = 0; i < m1; i++) {
-        for (int j = 0; j < n1; j++) {
-            X[i][j] = recursos[i][j];
-        }
-    }
-    for (int i = 0; i < n1; i++) {
-        Y[i][0] = quantidades[i][0];
-    }
+    // Print the resulting matrix
+    printf("Resulting Matrix:\n");
+    printMatrizProblema1(finalResultMatrix, rows, cols,totalCost);
 
-    recurMultMatriz(X, Y, Z, m1, n1, p1, 0, 0, 0, 0);
-    printf("Recursos necessarios por tipo de casa:\n");
-    printMatrizProblema1(Z, m1, p1);
 
-    for (int i = 0; i < m1; i++) free(X[i]);
-    free(X);
-    for (int i = 0; i < n1; i++) free(Y[i]);
-    free(Y);
-    for (int i = 0; i < m1; i++) free(Z[i]);
-    free(Z);
+    // Free the allocated memory
+    freeMatrix(resultMatrix, rows);
+    freeMatrix(finalResultMatrix, rows);
 
     printf("\n3. Resolvendo o Problema 2:\n");
 
