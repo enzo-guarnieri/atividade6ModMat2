@@ -55,6 +55,34 @@ int** multiplyMatrixRowByArray(int rows, int cols, int** matrix, int* factors) {
     }
     return result;
 }
+int getUserInput() {
+    int input;
+    int result;
+
+    printf("Digite um inteiro: ");
+    result = scanf("%d", &input);
+
+    while (result != 1) {
+        while (getchar() != '\n');
+        printf("Erro: a entrada não é um inteiro.\n Tente novamente:");
+        result = scanf("%d", &input);
+    }
+    return input;
+}
+
+
+int** createMatrix(int rows, int cols) {
+    int** resultingMatrix = allocateMatrix(rows, cols);
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            printf("Digite qual valor deseja para a posicao  LINHA[%d] COLUNA[%d] da matriz \n",i,j);
+            resultingMatrix[i][j] = getUserInput();
+        }
+    }
+    return resultingMatrix;
+}
+
+
 
 int* sumMatrixRows(int rows, int cols, int** matrix ) {
     int* result = (int*)malloc(3 * sizeof(int));
@@ -97,20 +125,14 @@ void printMatrizProblema2(int **F, int m, int p) {
 
 int main(void) {
     printf("\n1.\n");
-    int input;
-    int result;
 
-    printf("Digite um inteiro: ");
-    result = scanf("%d", &input);
+    printf("\nQuantas Linhas deseja na sua Matriz?:\n");
+    int row = getUserInput();
+    printf("\nQuantas Colunas deseja na sua Matriz?:\n");
+    int col = getUserInput();
 
-    if (result == 1) {
-        printf("Você digitou o inteiro: %d\n", input);
-    } else {
-        // Limpa o buffer de entrada
-        while (getchar() != '\n');
+    printMatrix(createMatrix(row,col),row,col);
 
-        printf("Erro: a entrada não é um inteiro.\n");
-    }
 
     int m = 2, n = 3, p = 4;
     int **A = (int **)malloc(m * sizeof(int *));
