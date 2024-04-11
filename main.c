@@ -97,6 +97,20 @@ void printMatrizProblema2(int **F, int m, int p) {
 
 int main(void) {
     printf("\n1.\n");
+    int input;
+    int result;
+
+    printf("Digite um inteiro: ");
+    result = scanf("%d", &input);
+
+    if (result == 1) {
+        printf("Você digitou o inteiro: %d\n", input);
+    } else {
+        // Limpa o buffer de entrada
+        while (getchar() != '\n');
+
+        printf("Erro: a entrada não é um inteiro.\n");
+    }
 
     int m = 2, n = 3, p = 4;
     int **A = (int **)malloc(m * sizeof(int *));
