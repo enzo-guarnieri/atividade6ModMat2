@@ -118,7 +118,7 @@ void printMatrizProblema2(int **F, int m, int p) {
         printf("-");
     }
     printf("\n");
-    char *grupos[2] = {"Adultos", "Criancas"};
+    char *grupos[2] = {"Maculino", "Feminino"};
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < p; j++) {
             printf("%9d ", F[i][j]);
@@ -230,10 +230,10 @@ int main(void) {
 
 
     // EX 3
-    printf("\n3. Resolvendo o Problema 2:\n");
+    printf("\n3. Resolvendo o Problema 3:\n");
     int m2 = 2, n2 = 2, p2 = 3;
-    int participantes[2][2] = {{200, 120}, {100, 80}};
-    int nutrientes[2][3] = {{20, 20, 20}, {30, 20, 10}};
+    int participantes[2][2] = {{80, 120}, {100, 200}};
+    int nutrientes[2][3] = {{20, 20, 20}, {10, 20, 30}};
 
     int **D = (int **)malloc(m2 * sizeof(int *));
     int **E = (int **)malloc(n2 * sizeof(int *));
